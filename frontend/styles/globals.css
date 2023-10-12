@@ -1,0 +1,42 @@
+/* @import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities'; */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.dice-card {
+  background: linear-gradient(#E86E4C, #A73339);
+}
+
+.flip-coin-card {
+  background: linear-gradient(#F4EFD3, #AF7159);
+}
+
+.rock-paper-scissor-card {
+  background: linear-gradient(#5FB6BA, #00657E);
+}
+
+.game-stat {
+  background-image: url("/images/banner.png");
+}
+
+.header {
+  background: linear-gradient(to left, #1F1F7A, #4849B7);
+}
+
+.feature-fair-betting {
+  background: linear-gradient(112.97deg, #A82A2B -76.34%, #1B183B 64.96%);
+}
+
+.feature-no-kyc {
+  background: linear-gradient(112.97deg, #EFC25E -76.34%, #1B183B 64.96%);
+}
+.feature-security {
+  background: linear-gradient(112.97deg, #5FB6BA -76.34%, #1B183B 64.96%);
+}
+
+.dice-input-box {
+  background: linear-gradient(180deg, #010038 0%, #443D89 100%);
+}

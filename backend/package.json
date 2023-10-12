@@ -1,0 +1,29 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "files": [
+    "./src/*"
+  ],
+  "scripts": {
+    "apollo-server": "nodemon ./src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.9.1",
+    "dotenv": "^16.0.3",
+    "graphql": "^16.8.0",
+    "graphql-compose": "^9.0.10",
+    "graphql-compose-connection": "^8.2.1",
+    "graphql-compose-mongoose": "^9.8.0",
+    "graphql-compose-pagination": "^8.3.0",
+    "mongoose": "^7.4.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

@@ -1,0 +1,811 @@
+type Query {
+  GamePlayAndOutcomeOne(
+    """Filter by fields"""
+    filter: FilterFindOneGamePlayEventInput
+    skip: Int
+    sort: SortFindOneGamePlayEventInput
+  ): GamePlayEvent
+  GamePlayAndOutcomeMany(
+    """Filter by fields"""
+    filter: FilterFindManyGamePlayEventInput
+    skip: Int
+    limit: Int = 100
+    sort: SortFindManyGamePlayEventInput
+  ): [GamePlayEvent!]!
+  GamePlayAndOutcomeCount(
+    """Filter by fields"""
+    filter: FilterCountGamePlayEventInput
+  ): Int
+  GamePlayAndOutcomePagination(
+    """Page number for displaying"""
+    page: Int
+
+    """"""
+    perPage: Int = 20
+
+    """Filter by fields"""
+    filter: FilterFindManyGamePlayEventInput
+    sort: SortFindManyGamePlayEventInput
+  ): GamePlayEventPagination
+  UserOne(
+    """Filter by fields"""
+    filter: FilterFindOneUserInput
+    skip: Int
+    sort: SortFindOneUserInput
+  ): User
+  UserMany(
+    """Filter by fields"""
+    filter: FilterFindManyUserInput
+    skip: Int
+    limit: Int = 100
+    sort: SortFindManyUserInput
+  ): [User!]!
+  UserCount(
+    """Filter by fields"""
+    filter: FilterCountUserInput
+  ): Int
+  UserPagination(
+    """Page number for displaying"""
+    page: Int
+
+    """"""
+    perPage: Int = 20
+
+    """Filter by fields"""
+    filter: FilterFindManyUserInput
+    sort: SortFindManyUserInput
+  ): UserPagination
+  StatInfoOne(
+    """Filter by fields"""
+    filter: FilterFindOneStatInfoInput
+    skip: Int
+    sort: SortFindOneStatInfoInput
+  ): StatInfo
+  StatInfoMany(
+    """Filter by fields"""
+    filter: FilterFindManyStatInfoInput
+    skip: Int
+    limit: Int = 100
+    sort: SortFindManyStatInfoInput
+  ): [StatInfo!]!
+  StatInfoCount(
+    """Filter by fields"""
+    filter: FilterCountStatInfoInput
+  ): Int
+  StatInfoPagination(
+    """Page number for displaying"""
+    page: Int
+
+    """"""
+    perPage: Int = 20
+
+    """Filter by fields"""
+    filter: FilterFindManyStatInfoInput
+    sort: SortFindManyStatInfoInput
+  ): StatInfoPagination
+}
+
+type GamePlayEvent {
+  chainId: Float!
+  gameName: String!
+  requestId: String!
+  playerAddress: String!
+  wager: String
+  tokenAddress: String
+  multiplier: Float
+  isOver: Boolean
+  isHeads: Boolean
+  playerAction: Float
+  numBets: Float
+  stopGain: String
+  stopLoss: String
+  VRFFee: String
+  payout: String
+  diceOutcomes: [String]
+  coinOutcomes: [Float]
+  randomActions: [Float]
+  payouts: [String]
+  numGames: Float
+  totalWageredInDollor: Float
+  totalProfitInDollor: Float
+  numBetsWon: Float
+  numBetsLoss: Float
+  outcomeTxHash: String
+  outcomeTxTmp: Float
+  _id: MongoID!
+}
+
+"""
+The `ID` scalar type represents a unique MongoDB identifier in collection. MongoDB by default use 12-byte ObjectId value (https://docs.mongodb.com/manual/reference/bson-types/#objectid). But MongoDB also may accepts string or integer as correct values for _id field.
+"""
+scalar MongoID
+
+""""""
+input FilterFindOneGamePlayEventInput {
+  chainId: Float
+  gameName: String
+  requestId: String
+  playerAddress: String
+  wager: String
+  tokenAddress: String
+  multiplier: Float
+  isOver: Boolean
+  isHeads: Boolean
+  playerAction: Float
+  numBets: Float
+  stopGain: String
+  stopLoss: String
+  VRFFee: String
+  payout: String
+  diceOutcomes: [String]
+  coinOutcomes: [Float]
+  randomActions: [Float]
+  payouts: [String]
+  numGames: Float
+  totalWageredInDollor: Float
+  totalProfitInDollor: Float
+  numBetsWon: Float
+  numBetsLoss: Float
+  outcomeTxHash: String
+  outcomeTxTmp: Float
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindOneGamePlayEventOperatorsInput
+  OR: [FilterFindOneGamePlayEventInput!]
+  AND: [FilterFindOneGamePlayEventInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindOneGamePlayEventOperatorsInput {
+  outcomeTxTmp: FilterFindOneGamePlayEventOutcomeTxTmpOperatorsInput
+  _id: FilterFindOneGamePlayEvent_idOperatorsInput
+}
+
+input FilterFindOneGamePlayEventOutcomeTxTmpOperatorsInput {
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  ne: Float
+  in: [Float]
+  nin: [Float]
+  exists: Boolean
+}
+
+input FilterFindOneGamePlayEvent_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindOneGamePlayEventInput {
+  _ID_ASC
+  _ID_DESC
+  OUTCOMETXTMP_ASC
+  OUTCOMETXTMP_DESC
+}
+
+""""""
+input FilterFindManyGamePlayEventInput {
+  chainId: Float
+  gameName: String
+  requestId: String
+  playerAddress: String
+  wager: String
+  tokenAddress: String
+  multiplier: Float
+  isOver: Boolean
+  isHeads: Boolean
+  playerAction: Float
+  numBets: Float
+  stopGain: String
+  stopLoss: String
+  VRFFee: String
+  payout: String
+  diceOutcomes: [String]
+  coinOutcomes: [Float]
+  randomActions: [Float]
+  payouts: [String]
+  numGames: Float
+  totalWageredInDollor: Float
+  totalProfitInDollor: Float
+  numBetsWon: Float
+  numBetsLoss: Float
+  outcomeTxHash: String
+  outcomeTxTmp: Float
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindManyGamePlayEventOperatorsInput
+  OR: [FilterFindManyGamePlayEventInput!]
+  AND: [FilterFindManyGamePlayEventInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindManyGamePlayEventOperatorsInput {
+  outcomeTxTmp: FilterFindManyGamePlayEventOutcomeTxTmpOperatorsInput
+  _id: FilterFindManyGamePlayEvent_idOperatorsInput
+}
+
+input FilterFindManyGamePlayEventOutcomeTxTmpOperatorsInput {
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  ne: Float
+  in: [Float]
+  nin: [Float]
+  exists: Boolean
+}
+
+input FilterFindManyGamePlayEvent_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindManyGamePlayEventInput {
+  _ID_ASC
+  _ID_DESC
+  OUTCOMETXTMP_ASC
+  OUTCOMETXTMP_DESC
+}
+
+""""""
+input FilterCountGamePlayEventInput {
+  chainId: Float
+  gameName: String
+  requestId: String
+  playerAddress: String
+  wager: String
+  tokenAddress: String
+  multiplier: Float
+  isOver: Boolean
+  isHeads: Boolean
+  playerAction: Float
+  numBets: Float
+  stopGain: String
+  stopLoss: String
+  VRFFee: String
+  payout: String
+  diceOutcomes: [String]
+  coinOutcomes: [Float]
+  randomActions: [Float]
+  payouts: [String]
+  numGames: Float
+  totalWageredInDollor: Float
+  totalProfitInDollor: Float
+  numBetsWon: Float
+  numBetsLoss: Float
+  outcomeTxHash: String
+  outcomeTxTmp: Float
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterCountGamePlayEventOperatorsInput
+  OR: [FilterCountGamePlayEventInput!]
+  AND: [FilterCountGamePlayEventInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterCountGamePlayEventOperatorsInput {
+  outcomeTxTmp: FilterCountGamePlayEventOutcomeTxTmpOperatorsInput
+  _id: FilterCountGamePlayEvent_idOperatorsInput
+}
+
+input FilterCountGamePlayEventOutcomeTxTmpOperatorsInput {
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  ne: Float
+  in: [Float]
+  nin: [Float]
+  exists: Boolean
+}
+
+input FilterCountGamePlayEvent_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+"""List of items with pagination."""
+type GamePlayEventPagination {
+  """Total object count."""
+  count: Int
+
+  """Array of objects."""
+  items: [GamePlayEvent!]
+
+  """Information to aid in pagination."""
+  pageInfo: PaginationInfo!
+}
+
+type PaginationInfo {
+  currentPage: Int!
+  perPage: Int!
+  pageCount: Int
+  itemCount: Int
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+}
+
+type User {
+  address: String!
+  username: String
+  createAt: Date
+  gameCount: UserGameCount
+  gameStats: UserGameStats
+  _id: MongoID!
+}
+
+scalar Date
+
+type UserGameCount {
+  name: String
+  count: Float
+}
+
+type UserGameStats {
+  totalWagered: String
+  totalBets: Float
+  totalBetsWon: Float
+  totalBetsLoss: Float
+  hightestMultiplier: String
+  hightestWin: String
+  grossProfit: String
+  netProfit: String
+}
+
+""""""
+input FilterFindOneUserInput {
+  address: String
+  username: String
+  createAt: Date
+  gameCount: FilterFindOneUserGameCountInput
+  gameStats: FilterFindOneUserGameStatsInput
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindOneUserOperatorsInput
+  OR: [FilterFindOneUserInput!]
+  AND: [FilterFindOneUserInput!]
+}
+
+""""""
+input FilterFindOneUserGameCountInput {
+  name: String
+  count: Float
+}
+
+""""""
+input FilterFindOneUserGameStatsInput {
+  totalWagered: String
+  totalBets: Float
+  totalBetsWon: Float
+  totalBetsLoss: Float
+  hightestMultiplier: String
+  hightestWin: String
+  grossProfit: String
+  netProfit: String
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindOneUserOperatorsInput {
+  address: FilterFindOneUserAddressOperatorsInput
+  _id: FilterFindOneUser_idOperatorsInput
+}
+
+input FilterFindOneUserAddressOperatorsInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: RegExpAsString
+  exists: Boolean
+}
+
+"""
+The string representation of JavaScript regexp. You may provide it with flags "/^abc.*/i" or without flags like "^abc.*". More info about RegExp characters and flags: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+"""
+scalar RegExpAsString @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf")
+
+input FilterFindOneUser_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindOneUserInput {
+  _ID_ASC
+  _ID_DESC
+  ADDRESS_ASC
+  ADDRESS_DESC
+}
+
+""""""
+input FilterFindManyUserInput {
+  address: String
+  username: String
+  createAt: Date
+  gameCount: FilterFindManyUserGameCountInput
+  gameStats: FilterFindManyUserGameStatsInput
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindManyUserOperatorsInput
+  OR: [FilterFindManyUserInput!]
+  AND: [FilterFindManyUserInput!]
+}
+
+""""""
+input FilterFindManyUserGameCountInput {
+  name: String
+  count: Float
+}
+
+""""""
+input FilterFindManyUserGameStatsInput {
+  totalWagered: String
+  totalBets: Float
+  totalBetsWon: Float
+  totalBetsLoss: Float
+  hightestMultiplier: String
+  hightestWin: String
+  grossProfit: String
+  netProfit: String
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindManyUserOperatorsInput {
+  address: FilterFindManyUserAddressOperatorsInput
+  _id: FilterFindManyUser_idOperatorsInput
+}
+
+input FilterFindManyUserAddressOperatorsInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: RegExpAsString
+  exists: Boolean
+}
+
+input FilterFindManyUser_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindManyUserInput {
+  _ID_ASC
+  _ID_DESC
+  ADDRESS_ASC
+  ADDRESS_DESC
+}
+
+""""""
+input FilterCountUserInput {
+  address: String
+  username: String
+  createAt: Date
+  gameCount: FilterCountUserGameCountInput
+  gameStats: FilterCountUserGameStatsInput
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterCountUserOperatorsInput
+  OR: [FilterCountUserInput!]
+  AND: [FilterCountUserInput!]
+}
+
+""""""
+input FilterCountUserGameCountInput {
+  name: String
+  count: Float
+}
+
+""""""
+input FilterCountUserGameStatsInput {
+  totalWagered: String
+  totalBets: Float
+  totalBetsWon: Float
+  totalBetsLoss: Float
+  hightestMultiplier: String
+  hightestWin: String
+  grossProfit: String
+  netProfit: String
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterCountUserOperatorsInput {
+  address: FilterCountUserAddressOperatorsInput
+  _id: FilterCountUser_idOperatorsInput
+}
+
+input FilterCountUserAddressOperatorsInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: RegExpAsString
+  exists: Boolean
+}
+
+input FilterCountUser_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+"""List of items with pagination."""
+type UserPagination {
+  """Total object count."""
+  count: Int
+
+  """Array of objects."""
+  items: [User!]
+
+  """Information to aid in pagination."""
+  pageInfo: PaginationInfo!
+}
+
+type StatInfo {
+  userAddress: String
+  period: String
+  totalVolume: String
+  grossProfit: String
+  createAt: Date
+  _id: MongoID!
+}
+
+""""""
+input FilterFindOneStatInfoInput {
+  userAddress: String
+  period: String
+  totalVolume: String
+  grossProfit: String
+  createAt: Date
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindOneStatInfoOperatorsInput
+  OR: [FilterFindOneStatInfoInput!]
+  AND: [FilterFindOneStatInfoInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindOneStatInfoOperatorsInput {
+  _id: FilterFindOneStatInfo_idOperatorsInput
+}
+
+input FilterFindOneStatInfo_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindOneStatInfoInput {
+  _ID_ASC
+  _ID_DESC
+}
+
+""""""
+input FilterFindManyStatInfoInput {
+  userAddress: String
+  period: String
+  totalVolume: String
+  grossProfit: String
+  createAt: Date
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindManyStatInfoOperatorsInput
+  OR: [FilterFindManyStatInfoInput!]
+  AND: [FilterFindManyStatInfoInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindManyStatInfoOperatorsInput {
+  _id: FilterFindManyStatInfo_idOperatorsInput
+}
+
+input FilterFindManyStatInfo_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindManyStatInfoInput {
+  _ID_ASC
+  _ID_DESC
+}
+
+""""""
+input FilterCountStatInfoInput {
+  userAddress: String
+  period: String
+  totalVolume: String
+  grossProfit: String
+  createAt: Date
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterCountStatInfoOperatorsInput
+  OR: [FilterCountStatInfoInput!]
+  AND: [FilterCountStatInfoInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterCountStatInfoOperatorsInput {
+  _id: FilterCountStatInfo_idOperatorsInput
+}
+
+input FilterCountStatInfo_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+"""List of items with pagination."""
+type StatInfoPagination {
+  """Total object count."""
+  count: Int
+
+  """Array of objects."""
+  items: [StatInfo!]
+
+  """Information to aid in pagination."""
+  pageInfo: PaginationInfo!
+}
+
+type Mutation {
+  """
+  Create one document with mongoose defaults, setters, hooks and validation
+  """
+  createUser(record: CreateOneUserInput!): CreateOneUserPayload
+
+  """
+  Update one document: 1) Retrieve one document by findById. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
+  """
+  updateUserById(_id: MongoID!, record: UpdateByIdUserInput!): UpdateByIdUserPayload
+}
+
+type CreateOneUserPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Created document"""
+  record: User
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+interface ErrorInterface {
+  """Generic error message"""
+  message: String
+}
+
+""""""
+input CreateOneUserInput {
+  address: String!
+  username: String
+  createAt: Date
+  gameCount: UserGameCountInput
+  gameStats: UserGameStatsInput
+}
+
+input UserGameCountInput {
+  name: String
+  count: Float
+}
+
+input UserGameStatsInput {
+  totalWagered: String
+  totalBets: Float
+  totalBetsWon: Float
+  totalBetsLoss: Float
+  hightestMultiplier: String
+  hightestWin: String
+  grossProfit: String
+  netProfit: String
+}
+
+type UpdateByIdUserPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Updated document"""
+  record: User
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input UpdateByIdUserInput {
+  address: String
+  username: String
+  createAt: Date
+  gameCount: UpdateByIdUserGameCountInput
+  gameStats: UpdateByIdUserGameStatsInput
+}
+
+""""""
+input UpdateByIdUserGameCountInput {
+  name: String
+  count: Float
+}
+
+""""""
+input UpdateByIdUserGameStatsInput {
+  totalWagered: String
+  totalBets: Float
+  totalBetsWon: Float
+  totalBetsLoss: Float
+  hightestMultiplier: String
+  hightestWin: String
+  grossProfit: String
+  netProfit: String
+}
