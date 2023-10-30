@@ -74,30 +74,32 @@ contract Common is ReentrancyGuard {
         uint256 gasAmount,
         address msgSender
     ) internal returns (uint256 VRFfee) {
-        // if (IVault(vault).hasBacklist(msgSender)) {
-        //     revert NotApprovedBankroll();
+        // // if (IVault(vault).hasBacklist(msgSender)) {
+        // //     revert NotApprovedBankroll();
+        // // }
+        // if (wager == 0) {
+        //     revert ZeroWager();
         // }
-        if (wager == 0) {
-            revert ZeroWager();
-        }
 
-        VRFfee = getVRFFee(gasAmount);
-        if (tokenAddress == address(0)) {
-            require(msg.value > wager + VRFfee, "msg.value is not enough!");
-            _refundExcessValue(msg.value - (VRFfee + wager));
-        } else {
-            if (msg.value < VRFfee) {
-                revert InvalidValue(VRFfee, msg.value);
-            }
+        // VRFfee = getVRFFee(gasAmount);
+        // if (tokenAddress == address(0)) {
+        //     require(msg.value > wager + VRFfee, "msg.value is not enough!");
+        //     _refundExcessValue(msg.value - (VRFfee + wager));
+        // } else {
+        //     if (msg.value < VRFfee) {
+        //         revert InvalidValue(VRFfee, msg.value);
+        //     }
 
-            IERC20(tokenAddress).safeTransferFrom(
-                msgSender,
-                address(this),
-                wager
-            );
-            _refundExcessValue(msg.value - VRFfee);
-        }
-        VRFFees += VRFfee;
+        //     IERC20(tokenAddress).safeTransferFrom(
+        //         msgSender,
+        //         address(this),
+        //         wager
+        //     );
+        //     _refundExcessValue(msg.value - VRFfee);
+        // }
+        // VRFFees += VRFfee;
+        
+        return 0;
     }
 
 
@@ -110,14 +112,14 @@ contract Common is ReentrancyGuard {
         address tokenAddress,
         uint256 amount
     ) internal {
-        if (tokenAddress == address(0)) {
-            (bool success, ) = payable(vault).call{value: amount}("");
-            if (!success) {
-                revert RefundFailed();
-            }
-        } else {
-            IERC20(tokenAddress).safeTransfer(vault, amount);
-        }
+        // if (tokenAddress == address(0)) {
+        //     (bool success, ) = payable(vault).call{value: amount}("");
+        //     if (!success) {
+        //         revert RefundFailed();
+        //     }
+        // } else {
+        //     IERC20(tokenAddress).safeTransfer(vault, amount);
+        // }
     }
 
     /**
@@ -125,25 +127,27 @@ contract Common is ReentrancyGuard {
      * @return fee amount of fee user has to pay
      */
     function getVRFFee(uint256 gasAmount) public view returns (uint256 fee) {
-        (, int256 answer, , , ) = LINK_ETH_FEED.latestRoundData();
-        (
-            uint32 fulfillmentFlatFeeLinkPPMTier1,
-            ,
-            ,
-            ,
-            ,
-            ,
-            ,
-            ,
+        // (, int256 answer, , , ) = LINK_ETH_FEED.latestRoundData();
+        // (
+        //     uint32 fulfillmentFlatFeeLinkPPMTier1,
+        //     ,
+        //     ,
+        //     ,
+        //     ,
+        //     ,
+        //     ,
+        //     ,
 
-        ) = IVRFCoordinatorV2(ChainLinkVRF).getFeeConfig();
+        // ) = IVRFCoordinatorV2(ChainLinkVRF).getFeeConfig();
 
-        fee =
-            tx.gasprice *
-            (gasAmount) +
-            ((1e12 *
-                uint256(fulfillmentFlatFeeLinkPPMTier1) *
-                uint256(answer)) / 1e18);
+        // fee =
+        //     tx.gasprice *
+        //     (gasAmount) +
+        //     ((1e12 *
+        //         uint256(fulfillmentFlatFeeLinkPPMTier1) *
+        //         uint256(answer)) / 1e18);
+
+        return 0;
     }
 
     /**
@@ -151,25 +155,27 @@ contract Common is ReentrancyGuard {
      * @param refund amount to send back to user
      */
     function _refundExcessValue(uint256 refund) internal {
-        if (refund == 0) {
-            return;
-        }
-        (bool success, ) = payable(msg.sender).call{value: refund}("");
-        if (!success) {
-            revert RefundFailed();
-        }
+        // if (refund == 0) {
+        //     return;
+        // }
+        // (bool success, ) = payable(msg.sender).call{value: refund}("");
+        // if (!success) {
+        //     revert RefundFailed();
+        // }
     }
 
     /**
      * @dev function to charge user for VRF
      */
     function _payVRFFee(uint256 gasAmount) internal returns (uint256 VRFfee) {
-        VRFfee = getVRFFee(gasAmount);
-        if (msg.value < VRFfee) {
-            revert InvalidValue(VRFfee, msg.value);
-        }
-        _refundExcessValue(msg.value - VRFfee);
-        VRFFees += VRFfee;
+        // VRFfee = getVRFFee(gasAmount);
+        // if (msg.value < VRFfee) {
+        //     revert InvalidValue(VRFfee, msg.value);
+        // }
+        // _refundExcessValue(msg.value - VRFfee);
+        // VRFFees += VRFfee;
+
+        return 0;
     }
 
     /**
@@ -177,15 +183,15 @@ contract Common is ReentrancyGuard {
      * Can only be called by owner
      */
     function transferFees(address to) external nonReentrant {
-        if (msg.sender != IVault(vault).owner()) {
-            revert NotOwner(IVault(vault).owner(), msg.sender);
-        }
-        uint256 fee = VRFFees;
-        VRFFees = 0;
-        (bool success, ) = payable(address(to)).call{value: fee}("");
-        if (!success) {
-            revert TransferFailed();
-        }
+        // if (msg.sender != IVault(vault).owner()) {
+        //     revert NotOwner(IVault(vault).owner(), msg.sender);
+        // }
+        // uint256 fee = VRFFees;
+        // VRFFees = 0;
+        // (bool success, ) = payable(address(to)).call{value: fee}("");
+        // if (!success) {
+        //     revert TransferFailed();
+        // }
     }
 
     function setCallbackGasLimit(uint32 limit) external {
@@ -201,20 +207,20 @@ contract Common is ReentrancyGuard {
         address tokenAddress,
         uint256 wager
     ) internal {
-        if (IVault(vault).hasBacklist(address(this))) {
-            revert NotApprovedBankroll();
-        }
-        if (tokenAddress == address(0)) {
-            if (!(msg.value == wager)) {
-                revert InvalidValue(wager, msg.value);
-            }
-        } else {
-            IERC20(tokenAddress).safeTransferFrom(
-                msg.sender,
-                address(this),
-                wager
-            );
-        }
+        // if (IVault(vault).hasBacklist(address(this))) {
+        //     revert NotApprovedBankroll();
+        // }
+        // if (tokenAddress == address(0)) {
+        //     if (!(msg.value == wager)) {
+        //         revert InvalidValue(wager, msg.value);
+        //     }
+        // } else {
+        //     IERC20(tokenAddress).safeTransferFrom(
+        //         msg.sender,
+        //         address(this),
+        //         wager
+        //     );
+        // }
     }
 
     /**
@@ -227,29 +233,29 @@ contract Common is ReentrancyGuard {
         uint256 wager,
         uint256 gasAmount
     ) internal {
-        if (IVault(vault).hasBacklist(address(this))) {
-            revert NotApprovedBankroll();
-        }
-        uint256 VRFfee = getVRFFee(gasAmount);
-        if (tokenAddress == address(0)) {
-            if (msg.value < wager + VRFfee) {
-                revert InvalidValue(wager, msg.value);
-            }
+        // if (IVault(vault).hasBacklist(address(this))) {
+        //     revert NotApprovedBankroll();
+        // }
+        // uint256 VRFfee = getVRFFee(gasAmount);
+        // if (tokenAddress == address(0)) {
+        //     if (msg.value < wager + VRFfee) {
+        //         revert InvalidValue(wager, msg.value);
+        //     }
 
-            _refundExcessValue(msg.value - (VRFfee + wager));
-        } else {
-            if (msg.value < VRFfee) {
-                revert InvalidValue(VRFfee, msg.value);
-            }
+        //     _refundExcessValue(msg.value - (VRFfee + wager));
+        // } else {
+        //     if (msg.value < VRFfee) {
+        //         revert InvalidValue(VRFfee, msg.value);
+        //     }
 
-            IERC20(tokenAddress).safeTransferFrom(
-                msg.sender,
-                address(this),
-                wager
-            );
-            _refundExcessValue(msg.value - VRFfee);
-        }
-        VRFFees += VRFfee;
+        //     IERC20(tokenAddress).safeTransferFrom(
+        //         msg.sender,
+        //         address(this),
+        //         wager
+        //     );
+        //     _refundExcessValue(msg.value - VRFfee);
+        // }
+        // VRFFees += VRFfee;
     }
 
     /**
@@ -263,14 +269,14 @@ contract Common is ReentrancyGuard {
         uint256 payout,
         address tokenAddress
     ) internal {
-        if (tokenAddress == address(0)) {
-            (bool success, ) = payable(player).call{value: payout}("");
-            if (!success) {
-                revert TransferFailed();
-            }
-        } else {
-            IERC20(tokenAddress).safeTransfer(player, payout);
-        }
+        // if (tokenAddress == address(0)) {
+        //     (bool success, ) = payable(player).call{value: payout}("");
+        //     if (!success) {
+        //         revert TransferFailed();
+        //     }
+        // } else {
+        //     IERC20(tokenAddress).safeTransfer(player, payout);
+        // }
     }
 
     /**
@@ -282,14 +288,14 @@ contract Common is ReentrancyGuard {
         uint256 amount,
         address tokenAddress
     ) internal {
-        if (tokenAddress == address(0)) {
-            (bool success, ) = vault.call{value: amount}("");
-            if (!success) {
-                revert TransferFailed();
-            }
-        } else {
-            IERC20(tokenAddress).safeTransfer(vault, amount);
-        }
+        // if (tokenAddress == address(0)) {
+        //     (bool success, ) = vault.call{value: amount}("");
+        //     if (!success) {
+        //         revert TransferFailed();
+        //     }
+        // } else {
+        //     IERC20(tokenAddress).safeTransfer(vault, amount);
+        // }
     }
 
     /**
@@ -302,7 +308,7 @@ contract Common is ReentrancyGuard {
         uint256 payout,
         address token
     ) internal {
-        IVault(vault).sendWinner(payable(player), payout, token);
+        // IVault(vault).sendWinner(payable(player), payout, token);
     }
 
     /**
