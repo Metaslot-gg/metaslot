@@ -2,7 +2,11 @@ import { fontFamily } from "@tailwindcss/defaultTheme"
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["./components/**/*.{js,ts,jsx,tsx}"],
+    content: [
+        "./app/**/page.{js,ts,jsx,tsx}",
+        "./app/**/components/*.{js,ts,jsx,tsx}",
+        "./components/**/*.{js,ts,jsx,tsx}",
+    ],
     theme: {
         screens: {
             sm: "576px",

@@ -23,6 +23,12 @@ const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL
 const MUMBAI_RPC_URL =
     process.env.MUMBAI_RPC_URL || "https://polygon-mumbai.g.alchemy.com/v2/your-api-key"
 const PRIVATE_KEY = process.env.PRIVATE_KEY
+const BSC_TESTNET_RPC_URL = process.env.BSC_TESTNET_RPC_URL || ""
+const FINDORA_TESTNET_RPC_URL = process.env.FINDORA_TESTNET_RPC_URL || ""
+const FINDORA_MAINNET_RPC_URL = process.env.FINDORA_MAINNET_RPC_URL || ""
+const GSC_MAINNET_RPC_URL = process.env.GSC_MAINNET_RPC_URL || ""
+const BSC_RPC_URL = process.env.BSC_RPC_URL || ""
+const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY || ""
 // optional
 const MNEMONIC = process.env.MNEMONIC || "Your mnemonic"
 const FORKING_BLOCK_NUMBER = parseInt(process.env.FORKING_BLOCK_NUMBER) || 0
@@ -90,6 +96,37 @@ module.exports = {
             accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
             chainId: 80001,
         },
+        bsc: {
+            url: BSC_RPC_URL,
+            accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+            chainId: 56, 
+        },
+        bsctest: {
+            url: BSC_TESTNET_RPC_URL,
+            accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+            chainId: 97,
+        },
+        findoratestnet: {
+            url: FINDORA_TESTNET_RPC_URL,
+            accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+            chainId: 2153,
+        },
+        findoramainnet: {
+            url: FINDORA_MAINNET_RPC_URL,
+            accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+            chainId: 2152,
+        },
+        gscmainnet: {
+            url: GSC_MAINNET_RPC_URL,
+            accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+            chainId: 1204,
+        }
+        
+        // bsc: {
+        //     url: BSC_RPC_URL,
+        //     accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+        //     chainId: 56,
+        // },
     },
     defaultNetwork: "hardhat",
     etherscan: {
@@ -100,6 +137,8 @@ module.exports = {
             mainnet: ETHERSCAN_API_KEY,
             polygon: POLYGONSCAN_API_KEY,
             polygonMumbai: POLYGONSCAN_API_KEY,
+            bsc: BSCSCAN_API_KEY,
+            bscTestnet: BSCSCAN_API_KEY,
         },
     },
     gasReporter: {

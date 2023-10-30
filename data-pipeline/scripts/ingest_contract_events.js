@@ -2,7 +2,7 @@ import dotenv from "dotenv"
 import ethers from "ethers"
 import fs from "fs/promises"
 import path from "path"
-import { client, MONGODB_DATABASE } from "./models.js"
+import { client, MONGODB_DATABASE } from "./mongodb.js"
 import _ from "lodash"
 import utils from "./utils/index.js"
 
@@ -27,12 +27,16 @@ dotenv.config()
 
 const ALCHEMY_APIKEY = process.env.ALCHEMY_APIKEY || ""
 const CHAIN_ID = parseInt(process.env.CHAIN_ID || "0")
-const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY || ""
-const DICE_GAME_ADDRESS = process.env.MUMBAI_DICE_ADDRESS || ""
-const COIN_FLIP_ADDRESS = process.env.MUMBAI_COIN_FLIP_ADDRESS || ""
-const ROCK_PAPER_SCISSORS = process.env.MUMBAI_ROCK_PAPER_SCISSORS || ""
-const provider = new ethers.providers.AlchemyProvider(CHAIN_ID, ALCHEMY_APIKEY)
-const signer = new ethers.Wallet(DEPLOYER_PRIVATE_KEY, provider)
+const DICE_GAME_ADDRESS = process.env.DICE_ADDRESS || ""
+const COIN_FLIP_ADDRESS = process.env.COIN_FLIP_ADDRESS || ""
+const ROCK_PAPER_SCISSORS = process.env.ROCK_PAPER_SCISSORS || ""
+const WAGER_UNIT = process.env.WAGER_UNIT || "weii"
+const CHAIN_RPC_URL = process.env.CHAIN_RPC_URL || "" 
+// change this for json provide for findora gsc and bsc
+const provider =
+    CHAIN_ID == 56 || CHAIN_ID == 97 || CHAIN_ID == 1204 || CHAIN_ID == 1205 
+        ? new ethers.providers.JsonRpcProvider(CHAIN_RPC_URL)
+        : new ethers.providers.AlchemyProvider(CHAIN_ID, ALCHEMY_APIKEY)
 
 async function run() {
     console.log("==== start contract events ingestion ====")
@@ -51,7 +55,8 @@ async function run() {
             "Dice",
             utils.DicePlayEventToJoinedDocument,
             utils.DiceOutcomeEventToJoinedDocument,
-            true
+            true,
+            WAGER_UNIT
         )
     )
 
@@ -63,7 +68,8 @@ async function run() {
             "CoinFlip",
             utils.CoinFlipPlayEventToJoinedDocument,
             utils.CoinFlipOutcomeEventToJoinedDocument,
-            true
+            true,
+            WAGER_UNIT
         )
     )
 
@@ -75,7 +81,8 @@ async function run() {
             "RockPaperScissors",
             utils.RpsPlayEventToJoinedDocument,
             utils.RpsOutcomeEventToJoinedDocument,
-            true
+            true,
+            WAGER_UNIT
         )
     )
 

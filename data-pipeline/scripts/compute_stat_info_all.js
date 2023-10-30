@@ -1,18 +1,20 @@
 import dotenv from "dotenv"
-import ethers from "ethers"
-import fs from "fs/promises"
-import path from "path"
-import { client, MONGODB_DATABASE } from "./models.js"
+import { connection, UserModel } from "./moongoos-connection.js"
+import { client, MONGODB_DATABASE } from "./mongodb.js"
 import _ from "lodash"
 import utils from "./utils/index.js"
 
 dotenv.config()
 
-async function run() {
-    console.log("==== catch up event ingestion ====")
-    // read only contract
+async function connectDatabase() {
     await client.connect()
     const db = client.db(MONGODB_DATABASE)
+    return db
+}
+
+export async function runAllStats(db) {
+    console.log("==== compute all stats ====")
+    // read only contract
     const cursor = await db.collection("GamePlayAndOutcomeEvent").aggregate([
         {
             $addFields: {
@@ -30,13 +32,13 @@ async function run() {
                 _id: { playerAddress: "$playerAddress", gameName: "$gameName" },
                 gameCount: { $sum: 1 },
                 totalWagered: { $sum: "$totalWageredInDollor" },
-                totalNumBets: { $sum: "$numBets" },
+                totalNumBets: { $sum: "$numGames" },
                 totalBetsWon: { $sum: "$numBetsWon" },
                 totalBetsLoss: { $sum: "$numBetsLoss" },
-                highestWin: { $max: "$grossProfitInDollor" },
-                highestMultiplier: { $max: "$multiplier" },
+                hightestWin: { $max: "$grossProfitInDollor" },
+                hightestMultiplier: { $max: "$multiplier" },
                 grossProfit: { $sum: "$grossProfitInDollor" },
-                netProfit: { $max: "$totalProfitInDollor" },
+                netProfit: { $sum: "$totalProfitInDollor" },
             },
         },
         {
@@ -52,10 +54,10 @@ async function run() {
                 totalNumBets: { $sum: "$totalNumBets" },
                 totalBetsWon: { $sum: "$totalBetsWon" },
                 totalBetsLoss: { $sum: "$totalBetsLoss" },
-                highestWin: { $max: "$highestWin" },
-                highestMultiplier: { $max: "$highestMultiplier" },
+                hightestWin: { $max: "$hightestWin" },
+                hightestMultiplier: { $max: "$hightestMultiplier" },
                 grossProfit: { $sum: "$grossProfit" },
-                netProfit: { $max: "$netProfit" },
+                netProfit: { $sum: "$netProfit" },
             },
         },
     ])
@@ -67,18 +69,26 @@ async function run() {
             totalNumBets: item.totalNumBets,
             totalBetsWon: item.totalBetsWon,
             totalBetsLoss: item.totalBetsLoss,
-            highestWin: item.highestWin,
-            highestMultiplier: item.highestMultiplier,
+            hightestWin: item.hightestWin,
+            hightestMultiplier: item.hightestMultiplier,
             grossProfit: item.grossProfit,
             netProfit: item.netProfit,
         }
-        await utils.upsertToCollection(db.collection("User"), { address: user.address }, user)
+        await utils.upsertToModel(UserModel, { address: user.address }, user)
     }
-    client.close()
-    console.log("client closed")
+    console.log("finish all stats")
 }
 
-run().catch((e) => {
-    console.log(e)
-    process.exit(0)
-})
+connectDatabase()
+    .then(async (db) => {
+        await runAllStats(db)
+    })
+    .then((resolve) => {
+        client.close()
+        console.log("Done")
+        process.exit(0)
+    })
+    .catch((e) => {
+        console.log(e)
+        process.exit(0)
+    })

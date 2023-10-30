@@ -2,8 +2,8 @@
 import React, { useState } from "react"
 import { useFormContext } from "react-hook-form"
 import { InputErrorLabel } from "../InputErrorLabel"
-
 import { useAccount, useBalance } from "wagmi"
+import utils from "../../utils"
 
 export function WagerInputsBox(props) {
     const {
@@ -18,7 +18,7 @@ export function WagerInputsBox(props) {
     const { address, isConnected } = useAccount()
     const { data: balance } = useBalance({ address: address })
 
-    const [totalWager, setTotalWager] = React.useState(1n)
+    const [totalWager, setTotalWager] = React.useState(1.0)
     const [hasSufficientFund, setHasSufficientFund] = React.useState(true)
 
     const [connected, setConnected] = useState(0)
@@ -31,24 +31,31 @@ export function WagerInputsBox(props) {
     }, [])
 
     React.useEffect(() => {
+        /**
+         *  validates input values for wager and total wager
+         *  uses eth in form values, wager, stop gaiin and stop loss
+         *  uses wei for balance checks
+         */
         const subscription = watchFormChanges((value, { name, type }) => {
-            if (name == "wager" || name == "numBets") {
-                //TODO: change to eth unit
-                const newTotalWager = BigInt(value.wager) * BigInt(value.numBets)
-                console.log(newTotalWager)
-                setTotalWager(newTotalWager)
-                setHasSufficientFund(balance.value > newTotalWager)
-                setValue("stopGain", Number(newTotalWager))
-                setValue("stopLoss", Number(newTotalWager))
+            if ((name == "wager" || name == "numBets") && value.wager != 'NaN') {
+                const w = utils.parseWagerValue(value.wager, value.inputUnit)
+                console.log(value)
+                console.log("parsed wager", w)
+                const newTotalWagerEth = parseFloat(value.wager) * parseInt(value.numBets)
+                const newTotalWagerWei = w * BigInt(value.numBets)
+                setTotalWager(newTotalWagerEth)
+                console.log("total wager in wei", newTotalWagerWei)
+                setHasSufficientFund(balance.value > newTotalWagerWei)
+                setValue("stopGain", newTotalWagerEth.toString())
+                setValue("stopLoss", newTotalWagerEth.toString())
             }
         })
         return () => subscription.unsubscribe()
     }, [watchFormChanges])
 
-    console.log(isValid)
-
     return (
         <div className="flex flex-col w-1/3 bg-base-100 my-4 px-8 pb-4 rounded-lg justify-end">
+            <input type="hidden" { ...register("inputUnit")} /> 
             <div className="form-control w-full">
                 <label className="label">
                     <span className="label-text">Wager</span>
@@ -60,9 +67,15 @@ export function WagerInputsBox(props) {
                         errors.wager ? "input-error" : ""
                     }`}
                     disabled={submitted}
-                    {...register("wager", { required: true })}
+                    {...register("wager", { 
+                        required: { value: true, message: "* required" },
+                        min: { value: 0.0001, message: "should greater than 0.0001" },
+                        max: { value: Number.MAX_SAFE_INTEGER, message: `should less than ${Number.MAX_SAFE_INTEGER}` },
+                        pattern: { value: /(\d*.\d{0,4}),?/, message: "only 4 digits of the fraction number" },
+                        setValueAs: (w) => utils.formatWagerValue(w) 
+                    })}
                 />
-                <InputErrorLabel msg="* Required" hidden={errors.wager} />
+                <InputErrorLabel msg={errors?.wager?.message} hidden={errors.wager} />
             </div>
             <div className="divider"></div>
             <div className="form-control w-full">
@@ -86,7 +99,7 @@ export function WagerInputsBox(props) {
                     <span className="label-text">Stop Gain</span>
                 </label>
                 <input
-                    type="number"
+                    type="text"
                     className={`input input-bordered w-full stopGain ${
                         errors.stopGain ? "input-error" : ""
                     }`}
@@ -108,7 +121,7 @@ export function WagerInputsBox(props) {
                     <span className="label-text">Stop Loss</span>
                 </label>
                 <input
-                    type="number"
+                    type="text"
                     disabled={submitted}
                     className={`input input-bordered w-full stopLoss ${
                         errors.stopLoss ? "input-error" : ""

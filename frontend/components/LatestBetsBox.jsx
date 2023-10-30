@@ -5,7 +5,9 @@ import { useQuery } from "@apollo/experimental-nextjs-app-support/ssr"
 import { GetLatestBets, GetLatestBetsForGame } from "../graphql/queries.js"
 import _ from "lodash"
 import { ethers } from "ethers"
-import { formatAddress } from "../utils"
+import { formatAddress, envs } from "../utils"
+import { ChainConfig } from "../utils/config"
+import { useAccount, useNetwork } from "wagmi"
 
 const GameLabel = ({ game }) => {
     return game == "Dice" ? (
@@ -25,13 +27,13 @@ const GameLabel = ({ game }) => {
     )
 }
 
-const TransactionLink = ({ txHash, txTmp }) => {
+const TransactionLink = ({ txHash, txTmp, chainId }) => {
     const date = new Date(txTmp * 1000)
     return (
         <a
             className="link link-accent"
             target="_blank"
-            href={`https://mumbai.polygonscan.com/tx/${txHash}`}
+            href={`${ChainConfig[chainId].Explorer}/tx/${txHash}`}
         >
             {date.toLocaleDateString()}
         </a>
@@ -43,12 +45,12 @@ const MultiplierFormatter = ({ multiplier }) => {
     return `${formattedMultiplier.toFixed(2)} x`
 }
 
-const ListBets = ({ data }) => {
+const ListBets = ({ data, chainId }) => {
     return _.map(data, (item) => {
         return (
             <tr key={item.requestId}>
                 <td>
-                    <TransactionLink txHash={item.outcomeTxHash} txTmp={item.outcomeTxTmp} />
+                    <TransactionLink txHash={item.outcomeTxHash} txTmp={item.outcomeTxTmp} chainId={chainId} />
                 </td>
                 <td>
                     <GameLabel game={item.gameName} />
@@ -68,9 +70,14 @@ const ListBets = ({ data }) => {
 }
 
 export function LatestBetsBox({ game }) {
+    const limit = envs.METASLOT_TABLE_ROWS
     const { loading, error, data } = game
-        ? useQuery(GetLatestBetsForGame, { variables: { game: game, skip: 0, limit: 5 } })
-        : useQuery(GetLatestBets, { variables: { skip: 0, limit: 5 } })
+        ? useQuery(GetLatestBetsForGame, { variables: { game: game, skip: 0, limit: limit } })
+        : useQuery(GetLatestBets, { variables: { skip: 0, limit: limit } })
+
+    const { isConnected } = useAccount()
+    const { chain } = useNetwork()
+    const chainId = chain?.id || 137
 
     return (
         <section className="live-bets flex py-8 justify-center">
@@ -92,7 +99,7 @@ export function LatestBetsBox({ game }) {
                         </thead>
                         <tbody>
                             {data?.GamePlayAndOutcomeMany && (
-                                <ListBets data={data.GamePlayAndOutcomeMany} />
+                                <ListBets data={data.GamePlayAndOutcomeMany} chainId={chainId} />
                             )}
                         </tbody>
                     </table>

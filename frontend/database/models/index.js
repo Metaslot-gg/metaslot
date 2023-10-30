@@ -42,7 +42,6 @@ const User = new mongoose.Schema(
     {
         address: { type: String, required: true, unique: true },
         username: String,
-        createAt: { type: Date, default: Date.now },
         gameCounts: [
             {
                 name: String,
@@ -50,15 +49,27 @@ const User = new mongoose.Schema(
             },
         ],
         totalWagered: Number,
-        totalBets: Number,
+        totalNumBets: Number,
         totalBetsWon: Number,
         totalBetsLoss: Number,
-        hightestMultiplier: String,
-        hightestWin: String,
-        grossProfit: String,
-        netProfit: String,
+        hightestMultiplier: Number,
+        hightestWin: Number,
+        grossProfit: { type: Number, index: true },
+        netProfit: { type: Number, index: true },
+        weeklyGrossProfit: { type: Number, index: true },
+        weeklyNetProfit: { type: Number, index: true },
+        monthlyGrossProfit: { type: Number, index: true },
+        monthlyNetProfit: { type: Number, index: true },
+        createdAt: Number,
+        createdAt: Number,
     },
-    { collection: "User" }
+    {
+        collection: "User",
+        timestamps: {
+            createdAt: "createdAt",
+            updatedAt: "createdAt",
+        },
+    }
 )
 
 const StatInfo = new mongoose.Schema(

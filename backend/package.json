@@ -21,7 +21,8 @@
     "graphql-compose-connection": "^8.2.1",
     "graphql-compose-mongoose": "^9.8.0",
     "graphql-compose-pagination": "^8.3.0",
-    "mongoose": "^7.4.2"
+    "mongoose": "^7.4.2",
+    "sturdy-websocket": "^0.2.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

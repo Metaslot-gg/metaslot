@@ -4,7 +4,7 @@ import { useForm, FormProvider } from "react-hook-form"
 import { useAccount, useNetwork } from "wagmi"
 import Dice from "../../contracts/artifacts/contracts/games/Dice.sol/Dice.json"
 import { ethers } from "ethers"
-import { waitForTransaction, watchContractEvent, writeContract, readContract } from "@wagmi/core"
+import { waitForTransaction, watchContractEvent, writeContract, readContract, fetchFeeData } from "@wagmi/core"
 import { NotificationBox } from "../NotificationBox"
 
 import { ChainConfig } from "../../utils/config"
@@ -12,12 +12,14 @@ import utils from "../../utils/index"
 import { DiceRangeInputsForm } from "./DiceRangeInputsForm"
 import { WagerInputsBox } from "./WagerInputsBox"
 
+import _ from "lodash"
+
 export function DiceInputForm(props) {
     const [submitted, setSubmitted] = useState(false)
     const [playLog, setPlayLog] = useState(null)
     const { address, isConnected } = useAccount()
-    const { chain } = isConnected ? useNetwork() : { chain: { id: 137 } }
-    const contractAddress = ChainConfig[chain.id]?.Contracts.Dice
+    const { chain } = useNetwork() 
+    const contractAddress = chain?.id ? ChainConfig[chain.id]?.Contracts.Dice : ChainConfig[137]?.Contracts.Dice
 
     const methods = useForm({
         mode: "all",
@@ -27,6 +29,7 @@ export function DiceInputForm(props) {
             winChance: "50.0",
             multiplier: "1.98",
             wager: "1",
+            inputUnit: utils.envs.INPUT_UNIT,
             numBets: "1",
             stopGain: "1",
             stopLoss: "1",
@@ -35,24 +38,26 @@ export function DiceInputForm(props) {
     const onSubmit = async (data) => {
         setSubmitted(true)
         setPlayLog("Waiting for transaction confirmed.")
-        const vrfFee = await readContract({
+        const { gasPrice } = await fetchFeeData()
+        const vrfFlatFee = await readContract({
             address: contractAddress,
             abi: Dice.abi,
             functionName: "getVRFFee",
             args: ["1000000"], // this is different between blockchains!!!!
         })
         const m = utils.toRawMultiplier(data.multiplier)
-        // TODO: change to eth
+        
+        // const wagerInWei = utils.parseWagerValue(data.wager, data.inputUnit)
         const args = [
-            parseInt(data.wager),
+            utils.parseWagerValue(data.wager, data.inputUnit),
             m,
             "0x0000000000000000000000000000000000000000",
             true,
             parseInt(data.numBets),
-            parseInt(data.stopGain),
-            parseInt(data.stopLoss),
+            utils.parseWagerValue(data.stopGain, data.inputUnit),
+            utils.parseWagerValue(data.stopLoss, data.inputUnit)
         ]
-        const amount = vrfFee * 2n + BigInt(data.wager) * BigInt(data.numBets)
+        const amount = (gasPrice * 1000000n + vrfFlatFee) * 2n + utils.parseWagerValue(data.wager, data.inputUnit) * BigInt(data.numBets)
         console.log("write to contract", args, address, amount)
 
         const { hash } = await writeContract({
@@ -80,12 +85,17 @@ export function DiceInputForm(props) {
                         logs[idx].args.playerAddress == address
                     )
                     if (logs[idx].args.playerAddress == address) {
-                        const totalWagers = parseInt(data.wager) * parseInt(data.numBets)
-                        const profit = logs[idx].args.payout - BigInt(totalWagers)
-                        const msg =
-                            profit > 0
-                                ? `You won! Your payout: ${logs[idx].args.payout}, profit: ${profit}`
-                                : "Sorry, you lost. Good luck at the next time."
+                        const totalWagers = logs[idx].args.wager * BigInt(parseInt(logs[idx].args.numBets))
+                        const profit = logs[idx].args.payout - totalWagers
+                        const aa = _.filter(logs[idx].args.payouts, (x) => {
+                            return x > 0n
+                        })
+                        const numWon = _.filter(logs[idx].args.payouts, (x) => {
+                            return x > 0n
+                        }).length
+                        const numLoss = logs[idx].args.numGames - numWon
+                        const payoutInEth = ethers.utils.formatEther(profit)
+                        const msg = `Results: number of games: ${logs[idx].args.numGames}, won: ${numWon} , loss: ${numLoss}, profit: ${payoutInEth}`
                         setPlayLog(msg)
                         setSubmitted(false)
                         unwatchOutcomeEvent?.()

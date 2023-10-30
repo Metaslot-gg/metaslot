@@ -6,14 +6,14 @@ import { StatBox } from "../components/StatBox"
 export default function Home() {
     return (
         <>
-            <section>
+            {/* <section>
                 <div className="flex justify-center">
                     <div>
                         <Image src="/images/banner-2.png" alt="logo" width="840" height="318" />
                     </div>
                 </div>
-            </section>
-            <section className="game-list flex py-8 justify-between">
+            </section> */}
+            {/* <section className="game-list flex py-8 justify-between">
                 <div className="dice-card card w-60 bg-base-100 shadow-xl image-normal mr-10 pt-10">
                     <figure>
                         <img src="/images/game-place-holder-home.png" alt="Dice" />
@@ -29,10 +29,10 @@ export default function Home() {
                         <img src="/images/game-place-holder-home.png" alt="Rock Paper Scissors" />
                     </figure>
                 </div>
-            </section>
+            </section> */}
             <StatBox />
             <LatestBetsBox />
-            <HomeFeature />
+            {/* <HomeFeature /> */}
         </>
     )
 }

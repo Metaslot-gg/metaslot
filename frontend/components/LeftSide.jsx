@@ -36,27 +36,27 @@ export function LeftSide(props) {
             </li>
             <div className="divider"></div>
             <li>
-                <Link href="/">
+                <Link href="/leader-board">
                     <LeaderBoardSvg /> Leader Board
                 </Link>
             </li>
             <li>
-                <Link href="/">
+                <Link href="/profile">
                     <ProfileSvg /> Profile
                 </Link>
             </li>
             <div className="divider"></div>
             <li>
-                <Link href="/">
-                    <PlaceHolderSvg /> Twitter
+                <Link href="https://twitter.com">
+                    <img src="/images/svg/twitter.svg" width={26} height={26} /> Twitter
                 </Link>
             </li>
-            <li>
+            {/* <li>
                 <Link href="/">
-                    <PlaceHolderSvg /> Instagram
+                    <img src="/images/svg/instagram.svg" width={26} height={26} /> Instagram
                 </Link>
             </li>
-            <li>
+             <li>
                 <Link href="/">
                     <PlaceHolderSvg /> Medium
                 </Link>
@@ -65,7 +65,7 @@ export function LeftSide(props) {
                 <Link href="/">
                     <PlaceHolderSvg /> Docs
                 </Link>
-            </li>
+            </li> */}
         </ul>
     )
 }
