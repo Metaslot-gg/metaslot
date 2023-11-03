@@ -87,11 +87,11 @@ const networkConfig = {
 
     1204: {
         name: "gscmainnet",
-        subscriptionId: "3133",
+        subscriptionId: "1",
         keyHash: "0xd4bb89654db74673a187bd804519e65e3f71a52bc55f11da7601a13dcf505314",
-        vrfCoordinator: "0x625aD3FC2F49A69529A44709BC04838260B3D862",
+        vrfCoordinator: "0x0060e3B2Dc7469ec5747EdE86f4f0d005B571538",
         vaultAddress: "0xA0ad9ca41aC61A115f29b9AdbBA7ba2164D7F08b",
-        linkEthFeed: "0x351Ff08FF5077d6E8704A4763836Fe187f074380",
+        linkEthFeed: "0x0060e3B2Dc7469ec5747EdE86f4f0d005B571538",
 
     },
 }

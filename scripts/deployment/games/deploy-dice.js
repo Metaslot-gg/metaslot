@@ -41,6 +41,7 @@ async function deployDice() {
         const vaultFactory = await ethers.getContractFactory("Vault")
         const vault = await vaultFactory.attach(networkConfig[chainId].vaultAddress)
         await vault.addGame(dice.address)
+        // await vault.addGame("0x9e4F4d53AB746AbF084614f7dF208847819c4A5e")
         console.log(`Successfully add dice address (${dice.address}) to vault (${vault.address})`)
     }
 }

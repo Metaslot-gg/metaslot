@@ -41,7 +41,7 @@ export function Headers(props) {
                 <div className="flex justify-between items-center header h-16 px-4">
                     <div>
                         <a className="link">
-                            <img src="/images/svg/pledge.svg" width={52} height={52} />
+                            <img src="/images/svg/metaslot.svg" width={52} height={52} />
                         </a>
                     </div>
                     <div className="grow">

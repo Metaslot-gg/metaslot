@@ -14,6 +14,7 @@ import { polygonMumbai, polygon, arbitrum, arbitrumGoerli, bsc, bscTestnet } fro
 import { alchemyProvider } from "wagmi/providers/alchemy"
 import utils from "../utils/index"
 import _ from "lodash"
+import { isConstructorDeclaration } from "typescript"
 
 // have a function to create a client for you
 function makeClient() {
@@ -62,6 +63,8 @@ const bscJsonProvider = (chain) => {
 }
 
 const findoraJsonProvider = (chain) => {
+    console.log(chain.id, utils.Findora_Gsc)
+    console.log(chain.rpcUrls.default)
     if (chain.id == utils.Findora_Gsc.id || chain.id == utils.Findora_Gsc_Test.id) {
         return {
             chain: chain.id == utils.Findora_Gsc.id ? utils.Findora_Gsc : utils.Findora_Gsc_Test,
