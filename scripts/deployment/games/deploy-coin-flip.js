@@ -24,6 +24,15 @@ async function deployDice() {
         console.log("successfully deployed CoinFlip contract at", coinFlip.address)
         // wait for 6 block confirmation to make sure contract completion of uploading bytecode
         await coinFlip.deployTransaction.wait(6)
+
+        // add dice contract to vault
+        const vaultFactory = await ethers.getContractFactory("Vault")
+        const vault = await vaultFactory.attach(networkConfig[chainId].vaultAddress)
+        await vault.addGame(coinFlip.address)
+        console.log(
+            `Successfully add CoinFlip address (${coinFlip.address}) to vault (${vault.address})`
+        )
+        
         // auto verification if not deployed on test chain
         if (!developmentChains.includes(network.name)) {
             await run("verify:verify", {
@@ -37,13 +46,7 @@ async function deployDice() {
                 ],
             })
         }
-        // add dice contract to vault
-        const vaultFactory = await ethers.getContractFactory("Vault")
-        const vault = await vaultFactory.attach(networkConfig[chainId].vaultAddress)
-        await vault.addGame(coinFlip.address)
-        console.log(
-            `Successfully add CoinFlip address (${coinFlip.address}) to vault (${vault.address})`
-        )
+
     }
 }
 

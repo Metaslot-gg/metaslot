@@ -26,6 +26,14 @@ async function deployDice() {
         console.log("successfully deployed RockPaperScissors contract at", rps.address)
         // wait for 6 block confirmation to make sure contract completion of uploading bytecode
         await rps.deployTransaction.wait(6)
+        
+        // add dice contract to vault
+        const vaultFactory = await ethers.getContractFactory("Vault")
+        const vault = await vaultFactory.attach(networkConfig[chainId].vaultAddress)
+        await vault.addGame(rps.address)
+        console.log(
+            `Successfully add RockPaperScissors address (${rps.address}) to vault (${vault.address})`
+        )
         // auto verification if not deployed on test chain
         if (!developmentChains.includes(network.name)) {
             await run("verify:verify", {
@@ -39,13 +47,7 @@ async function deployDice() {
                 ],
             })
         }
-        // add dice contract to vault
-        const vaultFactory = await ethers.getContractFactory("Vault")
-        const vault = await vaultFactory.attach(networkConfig[chainId].vaultAddress)
-        await vault.addGame(rps.address)
-        console.log(
-            `Successfully add RockPaperScissors address (${rps.address}) to vault (${vault.address})`
-        )
+
     }
 }
 
