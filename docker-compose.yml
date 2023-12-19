@@ -12,7 +12,7 @@ services:
 
   metaslot:
     container_name: metaslot
-    image: metaslot:0.0.1
+    image: metaslot:0.0.2
     command: ["pnpm", "run", "--filter", "./frontend", "start"]
     ports:
       - "8000:3000"
