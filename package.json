@@ -18,7 +18,8 @@
     "lint:fix": "solhint 'contracts/**/*.sol' --fix",
     "format": "prettier --write .",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js",
-    "fuzzing": "docker run -it --rm -v $PWD:/src trailofbits/eth-security-toolbox"
+    "fuzzing": "docker run -it --rm -v $PWD:/src trailofbits/eth-security-toolbox",
+    "build-all": "pnpm generate-abis-frontend && pnpm generate-abis-data-pipeline && pnpm run --filter ./frontend build"
   },
   "devDependencies": {
     "@chainlink/contracts": "0.5.1",
