@@ -100,6 +100,7 @@ contract Common is ReentrancyGuard {
         VRFFees += VRFfee;
     }
 
+
     /**
      * @dev function to transfer the wager held by the game contract to the bankroll
      * @param tokenAddress address of the token to transfer

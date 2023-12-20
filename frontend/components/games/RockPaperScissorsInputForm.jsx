@@ -1,12 +1,12 @@
 "use client"
 import React, { useState, useEffect } from "react"
 import { useForm, FormProvider } from "react-hook-form"
-
+import utils from "../../utils"
 import { NotificationBox } from "../NotificationBox"
-
+import { ethers } from "ethers"
 import RockPaperScissors from "../../contracts/artifacts/contracts/games/RockPaperScissors.sol/RockPaperScissors.json"
 import { useAccount, useNetwork } from "wagmi"
-import { waitForTransaction, watchContractEvent, writeContract, readContract } from "@wagmi/core"
+import { waitForTransaction, watchContractEvent, writeContract, readContract, fetchFeeData } from "@wagmi/core"
 import { ChainConfig } from "../../utils/config"
 import { WagerInputsBox } from "./WagerInputsBox"
 import { RockSvg, PaperSvg, ScissorsSvg } from "../icons/RpsSvg"
@@ -14,19 +14,14 @@ import { RockSvg, PaperSvg, ScissorsSvg } from "../icons/RpsSvg"
 export function RockPaperScissorsInputForm(props) {
     const methods = useForm({
         mode: "all",
-        defaultValues: { wager: "1", numBets: "1", stopGain: "1", stopLoss: "1" },
+        defaultValues: { wager: "1", numBets: "1", stopGain: "1", stopLoss: "1", inputUnit: utils.envs.INPUT_UNIT },
     })
     const [submitted, setSubmitted] = useState(false)
     const [playLog, setPlayLog] = useState(null)
     const { address, isConnected } = useAccount()
-    const { chain } = isConnected ? useNetwork() : { chain: { id: 137 } }
-    const contractAddress = ChainConfig[chain.id].Contracts.RockPaperScissors
+    const { chain } = useNetwork()
+    const contractAddress = chain?.id ? ChainConfig[chain.id].Contracts.RockPaperScissors : ChainConfig[137].Contracts.RockPaperScissors 
     const [playerAction, setPlayerAction] = useState(0)
-    // const { writeAsync: ROCK_PAPER_SCISSORS_PLAY } = useContractWrite({
-    //     address: contractAddress,
-    //     abi: RockPaperScissors.abi,
-    //     functionName: "RockPaperScissors_Play",
-    // })
 
     const PlayerActionImg = () => {
         return playerAction == 0 ? (
@@ -41,21 +36,22 @@ export function RockPaperScissorsInputForm(props) {
     const onSubmit = async (data) => {
         setSubmitted(true)
         setPlayLog("Waiting for transaction confirmed.")
-        const vrfFee = await readContract({
+        const { gasPrice } = await fetchFeeData()
+        const vrfFlatFee = await readContract({
             address: contractAddress,
             abi: RockPaperScissors.abi,
             functionName: "getVRFFee",
             args: ["1000000"], // this is different between blockchains!!!!
         })
         const args = [
-            BigInt(data.wager),
+            utils.parseWagerValue(data.wager, data.inputUnit),
             "0x0000000000000000000000000000000000000000",
             playerAction,
             parseInt(data.numBets),
-            BigInt(data.stopGain),
-            BigInt(data.stopLoss),
+            utils.parseWagerValue(data.stopGain, data.inputUnit),
+            utils.parseWagerValue(data.stopLoss, data.inputUnit),
         ]
-        const amount = vrfFee * 2n + BigInt(data.wager) * BigInt(data.numBets)
+        const amount = (gasPrice * 1000000n + vrfFlatFee) * 2n + utils.parseWagerValue(data.wager, data.inputUnit)  * BigInt(data.numBets)
 
         const { hash } = await writeContract({
             address: contractAddress,
@@ -84,13 +80,23 @@ export function RockPaperScissorsInputForm(props) {
                         logs[idx].args.playerAddress == address
                     )
                     if (logs[idx].args.playerAddress == address) {
-                        const totalWagers = parseInt(data.wager) * parseInt(data.numBets)
-                        console.log("total wager: ", totalWagers, "payout:", logs[idx].args.payout)
-                        const profit = logs[idx].args.payout - BigInt(totalWagers)
-                        const msg =
-                            profit > 0
-                                ? `You won! Your payout: ${logs[idx].args.payout}, profit: ${profit}`
-                                : "Sorry, you lost. Good luck at the next time."
+                        const totalWagers = logs[idx].args.wager * BigInt(parseInt(logs[idx].args.numBets))
+                        const profit = logs[idx].args.payout - totalWagers
+                        // 0->Rock, 1-> Paper, 2->Scissors
+                        const rstMap = [
+                            { draw: 0, win: 2, loss: 1 }, //0
+                            { draw: 1, win: 0, loss: 2 }, //1
+                            { draw: 2, win: 1, loss: 0 }, //2
+                        ]
+                        const numWon = _.filter(logs[idx].args.randomActions, (x) => {
+                            return x == rstMap[playerAction].win
+                        }).length
+                        const numDraw = _.filter(logs[idx].args.randomActions, (x) => {
+                            return x == rstMap[playerAction].draw
+                        }).length
+                        const numLoss = logs[idx].args.numGames - numWon - numDraw
+                        const payoutInEth = ethers.utils.formatEther(profit)
+                        const msg = `Results: number of games: ${logs[idx].args.numGames}, won: ${numWon} , draw: ${numDraw}, loss: ${numLoss}, profit: ${payoutInEth}` 
                         setPlayLog(msg)
                         setSubmitted(false)
                         unwatchOutcomeEvent?.()

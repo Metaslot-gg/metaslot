@@ -61,6 +61,39 @@ const networkConfig = {
         fundAmount: "100000000000000000", // 0.1
         automationUpdateInterval: "30",
     },
+    56: {
+        name: "bsc",
+        subscriptionId: "",
+        keyHash: "0x17cd473250a9a479dc7f234c64332ed4bc8af9e8ded7556aa6e66d83da49f470",
+        vrfCoordinator: "0xc587d9053cd1118f25F645F9E08BB98c9712A4EE",
+        linkEthFeed: "0xB38722F6A608646a538E882Ee9972D15c86Fc597",
+        vaultAddress: "",
+    },
+    97: {
+        name: "bsctest",
+        subscriptionId: "3133",
+        keyHash: "0xd4bb89654db74673a187bd804519e65e3f71a52bc55f11da7601a13dcf505314",
+        vrfCoordinator: "0x6A2AAd07396B36Fe02a22b33cf443582f682c82f",
+        linkEthFeed: "0x351Ff08FF5077d6E8704A4763836Fe187f074380",
+        vaultAddress: "0x1Fb788681D47B88A308042e80963c854dc1941d5",
+    },
+    2152: {
+        name: "findoramainnet",
+        subscriptionId: "3133",
+        keyHash: "0xd4bb89654db74673a187bd804519e65e3f71a52bc55f11da7601a13dcf505314",
+        vrfCoordinator: "0x625aD3FC2F49A69529A44709BC04838260B3D862",
+        vaultAddress: "0x1D8f4f8c9557cD7d0bC749F03d188dE986b7687C",
+    },
+
+    1204: {
+        name: "gscmainnet",
+        subscriptionId: "1",
+        keyHash: "0xd4bb89654db74673a187bd804519e65e3f71a52bc55f11da7601a13dcf505314",
+        vrfCoordinator: "0x0060e3B2Dc7469ec5747EdE86f4f0d005B571538",
+        vaultAddress: "0xA0ad9ca41aC61A115f29b9AdbBA7ba2164D7F08b",
+        linkEthFeed: "0x0060e3B2Dc7469ec5747EdE86f4f0d005B571538",
+
+    },
 }
 
 const developmentChains = ["hardhat", "localhost"]

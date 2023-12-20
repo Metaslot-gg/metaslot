@@ -1,7 +1,3 @@
-/* @import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities'; */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -40,3 +36,24 @@
 .dice-input-box {
   background: linear-gradient(180deg, #010038 0%, #443D89 100%);
 }
+
+.profile-box {
+  background-image: url("/images/profile-bkg.png");
+  height: 260px;
+}
+
+.leader-board-first {
+  background: linear-gradient(180deg, #A8891D 0%, rgba(67, 61, 146, 0) 100%);
+  height: 240px;
+}
+
+.leader-board-second {
+  background: linear-gradient(180deg, #848484 0%, rgba(67, 61, 146, 0) 100%);
+  height: 212px;
+}
+
+.leader-board-third {
+  background: linear-gradient(180deg, #6B4E22 0%, rgba(67, 61, 146, 0) 100%);
+  height: 181px;
+}
+

@@ -2,7 +2,7 @@ import dotenv from "dotenv"
 import ethers from "ethers"
 import fs from "fs/promises"
 import path from "path"
-import { client, MONGODB_DATABASE } from "./models.js"
+import { client, MONGODB_DATABASE } from "./mongodb.js"
 import _ from "lodash"
 import utils from "./utils/index.js"
 
@@ -27,12 +27,17 @@ dotenv.config()
 
 const ALCHEMY_APIKEY = process.env.ALCHEMY_APIKEY || ""
 const CHAIN_ID = parseInt(process.env.CHAIN_ID || "0")
-const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY || ""
-const DICE_GAME_ADDRESS = process.env.MUMBAI_DICE_ADDRESS || ""
-const COIN_FLIP_ADDRESS = process.env.MUMBAI_COIN_FLIP_ADDRESS || ""
-const ROCK_PAPER_SCISSORS = process.env.MUMBAI_ROCK_PAPER_SCISSORS || ""
-const provider = new ethers.providers.AlchemyProvider(CHAIN_ID, ALCHEMY_APIKEY)
-const signer = new ethers.Wallet(DEPLOYER_PRIVATE_KEY, provider)
+const DICE_GAME_ADDRESS = process.env.DICE_ADDRESS || ""
+const COIN_FLIP_ADDRESS = process.env.COIN_FLIP_ADDRESS || ""
+const ROCK_PAPER_SCISSORS = process.env.ROCK_PAPER_SCISSORS || ""
+const WAGER_UNIT = process.env.WAGER_UNIT || "weii"
+const CHAIN_RPC_URL = process.env.CHAIN_RPC_URL || "" 
+
+// const provider = new ethers.providers.AlchemyProvider(CHAIN_ID, ALCHEMY_APIKEY)
+const provider =
+    CHAIN_ID == 56 || CHAIN_ID == 97 || CHAIN_ID == 1204 || CHAIN_ID == 1205 
+        ? new ethers.providers.JsonRpcProvider(CHAIN_RPC_URL)
+        : new ethers.providers.AlchemyProvider(CHAIN_ID, ALCHEMY_APIKEY)
 const commit = true
 
 async function run() {
@@ -54,7 +59,7 @@ async function run() {
     console.log("process Dice from block number: ", diceCheckpoint?.value)
     const diceEvents = await dice.queryFilter(
         { events: ["Dice_Play_Event", "Dice_Outcome_Event"] },
-        diceCheckpoint ? diceCheckpoint.value : 0  
+        diceCheckpoint ? diceCheckpoint.value : 33411183
     )
     _.forEach(
         diceEvents,
@@ -64,7 +69,8 @@ async function run() {
             "Dice",
             utils.DicePlayEventToJoinedDocument,
             utils.DiceOutcomeEventToJoinedDocument,
-            false
+            false,
+            WAGER_UNIT
         )
     )
     const lastDice = _.maxBy(diceEvents, (item) => item.blockNumber)
@@ -81,7 +87,7 @@ async function run() {
         {
             events: ["CoinFlip_Play_Event", "CoinFlip_Outcome_Event"],
         },
-        coinCheckpoint ? coinCheckpoint.value : 0
+        coinCheckpoint ? coinCheckpoint.value : 33609527
     )
     _.forEach(
         coinEvents,
@@ -91,7 +97,8 @@ async function run() {
             "CoinFlip",
             utils.CoinFlipPlayEventToJoinedDocument,
             utils.CoinFlipOutcomeEventToJoinedDocument,
-            false
+            false,
+            WAGER_UNIT
         )
     )
     const lastCoin = _.maxBy(coinEvents, (item) => item.blockNumber)
@@ -108,7 +115,7 @@ async function run() {
         {
             event: ["RockPaperScissors_Play_Event", "RockPaperScissors_Outcome_Event"],
         },
-        rpsCheckpoint ? rpsCheckpoint.value : 0
+        rpsCheckpoint ? rpsCheckpoint.value : 33411214
     )
     _.forEach(
         rpsEvents,
@@ -118,7 +125,8 @@ async function run() {
             "RockPaperScissors",
             utils.RpsPlayEventToJoinedDocument,
             utils.RpsOutcomeEventToJoinedDocument,
-            false
+            false,
+            WAGER_UNIT
         )
     )
     const lastRps = _.maxBy(rpsEvents, (item) => item.blockNumber)
@@ -131,7 +139,12 @@ async function run() {
     console.log("rps process to block number: ", lastRps?.blockNumber)
 }
 
-run().catch((e) => {
-    console.log(e)
-    process.exit(0)
-})
+run()
+    .then((resolve) => {
+        console.log("done")
+        process.exit(0)
+    })
+    .catch((e) => {
+        console.log(e)
+        process.exit(0)
+    })

@@ -1,4 +1,6 @@
 import dotenv from "dotenv"
+import _ from "lodash"
+import { ethers } from "ethers"
 
 const Boundary = 99 * 10 ** 9
 const Max_Multiplier = 99 * 10 ** 5
@@ -8,7 +10,6 @@ const Min_WinChance = 0.1 * 10 ** 5
 const Max_WinChance = 95 * 10 ** 5
 
 dotenv.config()
-
 const envs = {
     //general config
     MONGODB_URI: process.env.MONGODB_URI || "",
@@ -17,7 +18,12 @@ const envs = {
     GRAPHQL_URL:
         process.env.NEXT_PUBLIC_VERCEL_ENV == "local"
             ? "http://localhost:4000/api/graphql"
+            : process.env.NEXT_PUBLIC_VERCEL_ENV == "self-host"
+            ? process.env.NEXT_PUBLIC_SELF_HOST_GRAPHQL_URL
             : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/graphql`,
+    METASLOT_TABLE_ROWS: parseInt(process.env.NEXT_PUBLIC_METASLOT_TABLE_ROWS) || 20,
+    CHAIN_IDS: _.map(process.env.NEXT_PUBLIC_CHAIN_ID.split(","), (x) => parseInt(x)),
+    INPUT_UNIT: process.env.NEXT_PUBLIC_INPUT_UNIT || "eth",
     // contracts - mumbai
     MUMBAI_DICE_ADDRESS: process.env.NEXT_PUBLIC_MUMBAI_DICE_ADDRESS || "",
     MUMBAI_COIN_FLIP_ADDRESS: process.env.NEXT_PUBLIC_MUMBAI_COIN_FLIP_ADDRESS || "",
@@ -35,9 +41,9 @@ const envs = {
     ARBITRUM_GOERLI_DICE_ADDRESS: process.env.NEXT_PUBLIC_ARBITRUM_GOERLI_COIN_FLIP_ADDRESS || "",
     ARBITRUM_GOERLI_RPS_ADDRESS: process.env.NEXT_PUBLIC_ARBITRUM_GOERLI_ROCK_PAPER_SCISSORS || "",
     // contract - findora gsc
-    FINDORA_GSC_DICE_ADDRESS: process.env.NEXT_PUBLIC_BSC_DICE_ADDRESS || "",
-    FINDORA_GSC_COIN_FLIP_ADDRESS: process.env.NEXT_PUBLIC_BSC_COIN_FLIP_ADDRESS || "",
-    FINDORA_GSC_RPS_ADDRESS: process.env.NEXT_PUBLIC_BSC_ROCK_PAPER_SCISSORS || "",
+    FINDORA_GSC_DICE_ADDRESS: process.env.NEXT_PUBLIC_GSC_DICE_ADDRESS || "",
+    FINDORA_GSC_COIN_FLIP_ADDRESS: process.env.NEXT_PUBLIC_GSC_COIN_FLIP_ADDRESS || "",
+    FINDORA_GSC_RPS_ADDRESS: process.env.NEXT_PUBLIC_GSC_ROCK_PAPER_SCISSORS || "",
     // contract - findora gsc test
     FINDORA_GSC_TEST_DICE_ADDRESS: process.env.NEXT_PUBLIC_BSC_TEST_DICE_ADDRESS || "",
     FINDORA_GSC_TEST_COIN_FLIP_ADDRESS: process.env.NEXT_PUBLIC_BSC_TEST_COIN_FLIP_ADDRESS || "",
@@ -52,8 +58,10 @@ const envs = {
     BSC_TEST_RPS_ADDRESS: process.env.NEXT_PUBLIC_MUMBAI_BSC_TEST_PAPER_SCISSORS || "",
 }
 
+process.env.NEXT_PUBLIC_PRINT_DEBUG == "enabled" && console.log(envs)
+
 const Findora_Gsc_Test = {
-    id: 1024,
+    id: 1205,
     name: "Findora GSC Testnet",
     network: "findora gsc testnet",
     nativeCurrency: {
@@ -73,7 +81,7 @@ const Findora_Gsc_Test = {
 }
 
 const Findora_Gsc = {
-    id: 1025,
+    id: 1204,
     name: "Findora GSC",
     network: "findora gsc ",
     nativeCurrency: {
@@ -96,8 +104,29 @@ const Findora_Gsc = {
     testnet: false,
 }
 
+/**
+ * @param value the value of wager input 
+ * @param unit eth or gei
+ * @returns parsed wager value in unit of wei (big number)
+ */
+function parseWagerValue(value, unit) {
+    if (unit == "wei") {
+        return BigInt(parseInt(value))
+    }
+    return ethers.utils.parseEther(value).toBigInt()
+}
+
+function formatWagerValue(value, unit) {
+    if (unit == "wei") {
+        return value
+    }
+    return parseFloat(value).toFixed(4)
+}
+
+
+
 function formatAddress(address) {
-    return address.slice(0, 6) + "..." + address.slice(-4)
+    return address && address.slice(0, 6) + "..." + address.slice(-4)
 }
 
 function handleMultiplierChange(multiplier, isOver) {
@@ -161,4 +190,6 @@ module.exports = {
     Min_Multiplier,
     Min_WinChance,
     Max_WinChance,
+    parseWagerValue,
+    formatWagerValue
 }

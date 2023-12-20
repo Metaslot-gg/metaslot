@@ -43,12 +43,34 @@ export const GetLatestBetsForGame = gql`
     }
 `
 
-const UserInfo = gql`
+export const UserBetsList = gql`
+    query PlayerBetsHistory($playerAddress: String, $skip: Int, $limit: Int) {
+        GamePlayAndOutcomeMany(
+            filter: { playerAddress: $playerAddress }
+            skip: $skip
+            limit: $limit
+            sort: OUTCOMETXTMP_DESC
+        ) {
+            chainId
+            gameName
+            playerAddress
+            wager
+            multiplier
+            numBets
+            payout
+            totalProfitInDollor
+            totalWageredInDollor
+            outcomeTxTmp
+            outcomeTxHash
+            requestId
+        }
+    }
+`
+
+export const UserInfo = gql`
     query UserInfo($address: String) {
-        # GamePlayAndOutcomeMany(filter: {gameName: $game}, skip: $skip, limit: $limit, sort:
-        UserMany(filter: { address: $address }) {
+        UserOne(filter: { address: $address }) {
             address
-            createAt
             gameCounts {
                 name
                 count
@@ -57,11 +79,27 @@ const UserInfo = gql`
             hightestMultiplier
             hightestWin
             netProfit
-            totalBets
+            totalNumBets
             totalBetsLoss
             totalBetsWon
             totalWagered
             username
+            createdAt
+        }
+    }
+`
+
+export const LeaderBoard = gql`
+    query LeaderBoard($limit: Int, $sortBy: SortFindManyUserInput) {
+        UserMany(limit: $limit, sort: $sortBy) {
+            address
+            username
+            grossProfit
+            netProfit
+            weeklyGrossProfit
+            monthlyGrossProfit
+            weeklyNetProfit
+            monthlyNetProfit
         }
     }
 `

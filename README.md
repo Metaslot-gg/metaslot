@@ -452,6 +452,13 @@ To exit Echidna type
 exit
 ```
 
+# Build with Prox
+```
+docker build --build-arg https_proxy=http://host.docker.internal:7890 \
+  --build-arg http_proxy=http://host.docker.internal:7890 \
+  --build-arg all_proxy=socks5://host.docker.internal:7890 -t pledge .
+```
+
 # Contributing
 
 Contributions are always welcome! Open a PR or an issue!

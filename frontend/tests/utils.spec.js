@@ -1,7 +1,25 @@
 import _ from "lodash"
 import utils from "../utils/index"
+import { ethers } from "ethers"
 
 describe("Units Tests", function () {
+
+    describe("Unit Conversion", () => {
+        it("should convert input units between eth and wei", () => {
+            const wei = 100n * 10n ** 18n
+            const eth = '100.0'
+            const decimalEth = '0.0001'
+            const decimalWei = 10n ** 14n
+            const convertedEth = utils.parseWagerValue(eth, 'eth')
+            const convertedDecimalEth = utils.parseWagerValue(decimalEth, 'eth')
+            console.log(convertedDecimalEth)
+            expect(convertedEth).toEqual(wei)
+            expect(convertedDecimalEth).toEqual(decimalWei) 
+            const convertedWei = ethers.utils.formatEther(wei)
+            expect(convertedWei).toEqual(eth)
+        })
+    })
+
     describe("Dice Input Arguments", () => {
         it("should handle range number changes", () => {
             const inputsOver = [500000, 5000000, 9500000, 9900000, 9990000]

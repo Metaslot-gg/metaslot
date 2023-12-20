@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "start": "next start",
     "build-schema": "nodemon -w ./database/ scripts/build_schema.js",
-    "event-ingestion": "nodemon scripts/ingest_contract_events.js",
-    "join-raw-events": "nodemon scripts/join_raw_events.js"
+    "cypress:run": "env-cmd cypress run --browser chrome --headed",
+    "start:server": "serve ../node_modules/@metamask/test-dapp/dist -p 3000",
+    "test": "start-server-and-test 'pnpm start:server' http-get://localhost:3000 'pnpm cypress:run'"
   },
   "keywords": [],
   "author": "",
@@ -45,18 +47,19 @@
   },
   "devDependencies": {
     "@ethersproject/bytes": "^5.7.0",
+    "@synthetixio/synpress": "3.7.2-beta.7",
     "@testing-library/jest-dom": "^6.1.2",
     "@testing-library/react": "^14.0.0",
+    "cypress": "^13.1.0",
+    "env-cmd": "^10.1.0",
     "ethers": "^5.7.1",
     "fs-extra": "^11.1.1",
     "jest": "^29.6.4",
     "jest-environment-jsdom": "^29.6.4",
     "next": "^13.4.12",
     "nodemon": "^3.0.1",
-    "postcss-preset-env": "^9.1.1"
-  },
-  "resolutions": {
-    "graphql": "16.5.0"
+    "postcss-preset-env": "^9.1.1",
+    "start-server-and-test": "^2.0.0"
   },
   "peerDependencies": {
     "next": "^13.4.12"

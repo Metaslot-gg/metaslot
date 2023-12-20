@@ -1,3 +1,4 @@
+import { ethers } from "ethers"
 import _ from "lodash"
 
 const OneEthInWei = 1n * 10n ** 18n
@@ -89,6 +90,7 @@ const RpsOutcomeEventToJoinedDocument = (item) => {
     }
 }
 
+// mongodb driver upsert operation
 const upsertToCollection = (collection, filter, update) => {
     return (
         collection
@@ -98,15 +100,28 @@ const upsertToCollection = (collection, filter, update) => {
     )
 }
 
+// mongoose upsert operation
+const upsertToModel = (model, conditions, update) => {
+    return (
+        model
+            .findOneAndUpdate(conditions, update, {
+                upsert: true,
+            })
+            // .then(console.log)
+            .catch(console.error)
+    )
+}
+
 const getCheckPoint = (db, key) => {
     return db.collection("PipeLineCheckPoints").findOne({ key: key })
 }
 
 const handleGameEvents =
-    (db, chainId, gameName, playEventHandler, outcomeEventHandler, commit) => async (data) => {
+    (db, chainId, gameName, playEventHandler, outcomeEventHandler, commit, wagerUnit = "wei") => async (data) => {
         if (data.event?.includes("Outcome_Event")) {
             const outcomeRecord = outcomeEventHandler(data)
             const block = await data.getBlock()
+            // TODO; should change to Number after change to eth
             const totalWager = BigInt(data.args.wager) * BigInt(data.args.numBets)
             const profit = BigInt(data.args.payout) - totalWager
             const wons = _.filter(data.args.payouts, (x) => {
@@ -120,8 +135,8 @@ const handleGameEvents =
                     chainId: chainId,
                     outcomeTxHash: data.transactionHash,
                     outcomeTxTmp: block.timestamp,
-                    totalWageredInDollor: totalWager, // fix me wei
-                    totalProfitInDollor: profit, // fix me wei
+                    totalWageredInDollor: wagerUnit == "wei" ? totalWager : parseFloat(ethers.utils.formatEther(totalWager)),
+                    totalProfitInDollor: wagerUnit == "wei" ? profit : parseFloat(ethers.utils.formatEther(profit)),
                     numBetsWon: wons,
                     numBetsLoss: data.args.numGames - wons,
                     ...outcomeRecord,
@@ -152,6 +167,7 @@ export default {
     RpsPlayEventToJoinedDocument,
     RpsOutcomeEventToJoinedDocument,
     upsertToCollection,
+    upsertToModel,
     getCheckPoint,
     handleGameEvents,
 }

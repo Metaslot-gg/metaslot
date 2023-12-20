@@ -61,7 +61,7 @@ export const ChainConfig = {
         },
         Explorer: "https://bscscan.com",
     },
-    56288: {
+    97: {
         Contracts: {
             Dice: envs.BSC_TEST_DICE_ADDRESS,
             CoinFlip: envs.BSC_TEST_COIN_FLIP_ADDRESS,

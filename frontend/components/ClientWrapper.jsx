@@ -13,8 +13,8 @@ import { configureChains, createConfig, WagmiConfig } from "wagmi"
 import { polygonMumbai, polygon, arbitrum, arbitrumGoerli, bsc, bscTestnet } from "wagmi/chains"
 import { alchemyProvider } from "wagmi/providers/alchemy"
 import utils from "../utils/index"
-
-console.log(utils.envs.GRAPHQL_URL)
+import _ from "lodash"
+import { isConstructorDeclaration } from "typescript"
 
 // have a function to create a client for you
 function makeClient() {
@@ -32,16 +32,24 @@ function makeClient() {
 }
 
 // wallet connect
-const chains = [
+const chainList = [
     polygonMumbai,
     polygon,
     arbitrum,
     arbitrumGoerli,
-    // bsc,
-    // bscTestnet,
-    // utils.Findora_Gsc,
-    // utils.Findora_Gsc_Test,
+    bsc,
+    bscTestnet,
+    utils.Findora_Gsc,
+    utils.Findora_Gsc_Test,
 ]
+
+// console.log(utils.envs.CHAIN_IDS)
+// console.log(utils.envs.CHAIN_IDS.includes(polygonMumbai.id))
+const chains = _.filter(chainList, (c) => {
+    console.log(c.id, utils.envs.CHAIN_IDS, utils.envs.CHAIN_IDS.includes(c.id))
+    return utils.envs.CHAIN_IDS.includes(c.id)
+})
+// console.log(chains)
 
 const bscJsonProvider = (chain) => {
     if (chain.id == bsc.id || chain.id == bscTestnet.id) {
@@ -55,6 +63,8 @@ const bscJsonProvider = (chain) => {
 }
 
 const findoraJsonProvider = (chain) => {
+    console.log(chain.id, utils.Findora_Gsc)
+    console.log(chain.rpcUrls.default)
     if (chain.id == utils.Findora_Gsc.id || chain.id == utils.Findora_Gsc_Test.id) {
         return {
             chain: chain.id == utils.Findora_Gsc.id ? utils.Findora_Gsc : utils.Findora_Gsc_Test,
